@@ -792,13 +792,15 @@
                             <div class="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
                                 <i data-lucide="at-sign" class="w-4 h-4 text-neutral-400 flex-shrink-0"></i>
                                 <span class="text-sm text-neutral-600 hidden sm:inline">主邮箱：</span>
-                                <a href="mailto:me@kslinmeng.cn" class="text-sm text-neutral-900 font-medium hover:underline break-all">LDefender@kslinmeng.cn</a>
+                                <!-- 修复了这里的邮件跳转链接 -->
+                                <a href="mailto:LDefender@kslinmeng.cn" class="text-sm text-neutral-900 font-medium hover:underline break-all">LDefender@kslinmeng.cn</a>
                                 <span class="text-xs text-neutral-400 ml-auto hidden sm:block">(推荐)</span>
                             </div>
                             <div class="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
                                 <i data-lucide="mail-plus" class="w-4 h-4 text-neutral-400 flex-shrink-0"></i>
                                 <span class="text-sm text-neutral-600 hidden sm:inline">备用邮箱：</span>
-                                <a href="mailto:wemebabo57@gmail.com" class="text-sm text-neutral-900 font-medium hover:underline break-all">lcloudcode@hotmail.com</a>
+                                <!-- 修复了这里的备用邮件跳转链接 -->
+                                <a href="mailto:lcloudcode@hotmail.com" class="text-sm text-neutral-900 font-medium hover:underline break-all">lcloudcode@hotmail.com</a>
                             </div>
                         </div>
                         <p class="text-xs text-neutral-500 mt-4 flex items-center gap-1.5">
@@ -881,7 +883,8 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p class="text-center text-sm text-neutral-500">量盾安全软件 © 2026 版权所有</p>
                 <div class="flex items-center gap-4 text-sm text-neutral-500 flex-wrap justify-center">
-                    <a href="mailto:QQ201324qq0596@outlook.com" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
+                    <!-- 修复了页脚的邮件跳转链接，与主邮箱保持一致 -->
+                    <a href="mailto:LDefender@kslinmeng.cn" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
                         <i data-lucide="mail" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">联系支持</span>
                     </a>
@@ -928,7 +931,6 @@
                     if (m !== menu) m.classList.add('hidden');
                 });
                 
-                // Fix accessibility bug by tracking aria-expanded
                 this.setAttribute('aria-expanded', !isHidden);
                 menu.classList.toggle('hidden', !isHidden);
             });

@@ -30,12 +30,34 @@
     <style>
         html { scroll-behavior: smooth; }
 
+        :root {
+            --z-base: 0;
+            --z-header: 50;
+            --z-overlay: 60;
+            --z-toast: 70;
+        }
+
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             color: #171717;
             background: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 滚动进度条 */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, #171717 0%, #525252 100%);
+            z-index: var(--z-overlay);
+            transition: width 0.1s ease-out;
         }
 
         ::selection {
@@ -43,50 +65,160 @@
             color: #fff;
         }
 
+        /* Hero 装饰背景 */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(23,23,23,0.04) 0%, rgba(23,23,23,0.01) 40%, transparent 70%);
+            animation: heroPulse 8s ease-in-out infinite;
+        }
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(82,82,82,0.04) 0%, transparent 70%);
+            animation: heroPulse 10s ease-in-out infinite reverse;
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* Logo 微光环 */
+        .logo-glow {
+            position: relative;
+        }
+        .logo-glow::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(23,23,23,0.12), rgba(82,82,82,0.04));
+            filter: blur(14px);
+            z-index: -1;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
         .btn-primary {
             background: #171717;
             color: #fff;
-            transition: background 0.15s ease, transform 0.1s ease;
+            transition: background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-primary:hover { background: #404040; }
-        .btn-primary:active { transform: translateY(1px); }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #404040 0%, #262626 100%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .btn-primary:hover { box-shadow: 0 8px 28px rgba(23,23,23,0.22); transform: translateY(-1px); }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary > * { position: relative; z-index: 1; }
 
         .btn-secondary, .btn-browser {
             background: #fff;
             color: #171717;
             border: 1px solid #e5e5e5;
-            transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
         }
         .btn-secondary:hover {
-            border-color: #a3a3a3;
+            border-color: #171717;
             background: #fafafa;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            transform: translateY(-1px);
         }
-        .btn-secondary:active, .btn-browser:active { transform: translateY(1px); }
-        
+        .btn-secondary:active, .btn-browser:active { transform: translateY(0); }
+
         .btn-browser:hover {
             border-color: #171717;
             background: #fafafa;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            transform: translateY(-1px);
         }
 
         .link {
             color: #525252;
-            transition: color 0.15s ease;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+        .link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 1px;
+            background: #171717;
+            transition: width 0.25s ease;
         }
         .link:hover { color: #171717; }
+        .link:hover::after { width: 100%; }
+
+        .nav-active {
+            color: #171717 !important;
+            font-weight: 500;
+        }
+        .nav-active::after {
+            width: 100% !important;
+        }
 
         .card {
             background: #fff;
             border: 1px solid #e5e5e5;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(23,23,23,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         .card:hover {
             border-color: #d4d4d4;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+            transform: translateY(-2px);
         }
+        .card:hover::before { opacity: 1; }
 
         .promo-frame {
             background: #fafafa;
             border: 1px solid #e5e5e5;
+            transition: box-shadow 0.3s ease;
+        }
+        .promo-frame:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
         }
         .promo-img {
             width: 100%;
@@ -103,40 +235,57 @@
             }
         }
 
-        .carousel-img { transition: opacity 0.5s ease; }
+        .carousel-img { transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1); }
         .carousel-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(0,0,0,0.25);
-            transition: background 0.2s ease, transform 0.2s ease;
+            transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
+            cursor: pointer;
         }
         .carousel-dot.active {
             background: #171717;
-            transform: scale(1.2);
+            transform: scale(1.1);
+            width: 22px;
+            border-radius: 4px;
         }
         .carousel-dot:hover { background: rgba(0,0,0,0.5); }
 
-        .detail-row { transition: background 0.15s ease; }
-        .detail-row:hover { background: #fafafa; }
+        .carousel-arrow {
+            z-index: 5;
+        }
+        @media (max-width: 640px) {
+            .carousel-arrow { width: 36px; height: 36px; }
+        }
+
+        .detail-row { transition: background 0.2s ease, padding-left 0.2s ease; }
+        .detail-row:hover { background: #fafafa; padding-left: 1.25rem; }
 
         .divider {
             height: 1px;
-            background: #e5e5e5;
+            background: linear-gradient(90deg, transparent 0%, #e5e5e5 50%, transparent 100%);
         }
 
-        .section-muted { background: #fafafa; }
+        .section-muted {
+            background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+        }
 
         .icon-box {
             background: #fafafa;
             color: #171717;
             border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+        }
+        .card:hover .icon-box {
+            border-color: #171717;
+            box-shadow: 0 2px 8px rgba(23,23,23,0.08);
         }
 
         .scroll-reveal {
             opacity: 0;
-            transform: translateY(16px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
         }
         .scroll-reveal.visible {
             opacity: 1;
@@ -146,39 +295,44 @@
         .badge-new {
             display: inline-flex;
             align-items: center;
-            padding: 1px 6px;
+            padding: 2px 7px;
             border-radius: 4px;
             font-size: 10px;
             font-weight: 600;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
             background: #171717;
             color: #fff;
+            animation: badgePulse 2.5s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(23,23,23,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(23,23,23,0); }
         }
 
         .dropdown-menu {
             background: #fff;
             border: 1px solid #e5e5e5;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            animation: dropdownIn 0.15s ease;
+            animation: dropdownIn 0.2s cubic-bezier(0.16,1,0.3,1);
             transform-origin: top center;
         }
         @keyframes dropdownIn {
-            from { opacity: 0; transform: translateY(-4px); }
+            from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .dropdown-toggle {
-            transition: background 0.15s ease;
+            transition: background 0.2s ease;
         }
-        .dropdown-toggle:hover { background: rgba(255,255,255,0.1); }
+        .dropdown-toggle:hover { background: rgba(255,255,255,0.15); }
 
         .update-tag {
             display: inline-flex;
             align-items: center;
-            padding: 2px 8px;
+            padding: 3px 9px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
             background: #171717;
             color: #fff;
         }
@@ -197,48 +351,104 @@
             font-size: 13px;
             font-weight: 600;
             color: #737373;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* 滚动到顶按钮 */
+        .back-to-top {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #171717;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 6px 20px rgba(23,23,23,0.2);
+            z-index: var(--z-overlay);
+            cursor: pointer;
+            border: none;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(23,23,23,0.3);
+        }
+
+        /* 减少动效偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 <base target="_blank">
 </head>
 <body class="bg-white text-neutral-900">
 
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
     <!-- 顶部导航 -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-neutral-200">
+    <header class="fixed top-0 left-0 right-0 z-[var(--z-header)] bg-white/90 backdrop-blur-md border-b border-neutral-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <a href="#" class="flex items-center gap-2.5 kbd-focus rounded" target="_self">
-                <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" class="w-7 h-7 rounded-md flex-shrink-0 object-contain">
+                <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="28" height="28" class="w-7 h-7 rounded-md flex-shrink-0 object-contain">
                 <span class="text-sm font-semibold text-neutral-900">量盾安全软件</span>
             </a>
             <nav class="hidden md:flex items-center gap-6">
-                <a href="#features" class="link text-sm" target="_self">产品介绍</a>
-                <a href="#details" class="link text-sm" target="_self">功能详情</a>
-                <a href="#support" class="link text-sm" target="_self">支持</a>
-                <a href="#download" class="link text-sm" target="_self">下载</a>
+                <a href="#features" class="link text-sm" target="_self" data-section="features">产品介绍</a>
+                <a href="#details" class="link text-sm" target="_self" data-section="details">功能详情</a>
+                <a href="#support" class="link text-sm" target="_self" data-section="support">支持</a>
+                <a href="/download.html" class="link text-sm" target="_self">下载</a>
+                <a href="/changelog.html" class="link text-sm" target="_self">更新日志</a>
+                <a href="/about.html" class="link text-sm" target="_self">关于</a>
                 <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="link text-sm">工具站</a>
                 <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="link text-sm">国际站</a>
             </nav>
-            <div class="flex items-center gap-1.5 md:hidden">
-                <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap">
-                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
-                    工具站
-                </a>
-                <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap">
-                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-                    国际站
-                </a>
-            </div>
+            <button type="button" id="mobileMenuToggle" class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-md text-neutral-700 hover:bg-neutral-100 kbd-focus" aria-label="打开菜单" aria-expanded="false">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
         </div>
     </header>
+
+    <div id="mobileMenu" class="md:hidden hidden bg-white border-b border-neutral-200 fixed top-14 left-0 right-0 z-[var(--z-header)] shadow-md">
+        <nav class="flex flex-col py-2">
+            <a href="#features" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">产品介绍</a>
+            <a href="#details" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">功能详情</a>
+            <a href="#support" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">支持</a>
+            <a href="/download.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">下载</a>
+            <a href="/changelog.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">更新日志</a>
+            <a href="/about.html" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100" target="_self">关于</a>
+            <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50 border-b border-neutral-100">工具站</a>
+            <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="px-6 py-3 text-sm text-neutral-700 hover:bg-neutral-50">国际站</a>
+        </nav>
+    </div>
 
     <main class="pt-14">
 
         <!-- Hero -->
         <section class="relative">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-8 sm:pt-24 sm:pb-12">
+            <div class="hero-bg"></div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-8 sm:pt-24 sm:pb-12 relative z-10">
                 <div class="text-center scroll-reveal">
-                    <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mx-auto mb-6 object-contain shadow-sm">
+                    <div class="logo-glow inline-block mb-6">
+                        <img src="https://pan.kslinmeng.cn/view.php/a969af51b121abb0b57963fbed808ce5.png" alt="量盾安全软件" width="64" height="64" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mx-auto object-contain shadow-sm relative z-10">
+                    </div>
                     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-neutral-900 tracking-tight mb-4">
                         量盾安全软件
                     </h1>
@@ -250,12 +460,18 @@
                 <div class="mt-10 sm:mt-12 scroll-reveal">
                     <div class="promo-frame rounded-xl overflow-hidden shadow-sm">
                         <div id="promo-carousel" class="relative">
-                            <img src="https://pan.kslinmeng.cn/down.php/ef4d1e456a781bacc84d641770480716.png" alt="量盾安全中心界面截图 1" class="promo-img carousel-img active" data-index="0" style="position: relative;">
-                            <img src="https://pan.kslinmeng.cn/view.php/b6d9786097e7aa24189c58f97794a7c1.png" alt="量盾安全中心界面截图 2" class="promo-img carousel-img" data-index="1" style="opacity: 0; position: absolute; top: 0; left: 0;">
+                            <img src="https://pan.kslinmeng.cn/down.php/ef4d1e456a781bacc84d641770480716.png" alt="量盾安全中心界面截图 1" width="1200" height="675" class="promo-img carousel-img active" data-index="0" style="position: relative;">
+                            <img src="https://pan.kslinmeng.cn/view.php/b6d9786097e7aa24189c58f97794a7c1.png" alt="量盾安全中心界面截图 2" loading="lazy" width="1200" height="675" class="promo-img carousel-img" data-index="1" style="opacity: 0; position: absolute; top: 0; left: 0;">
+                            <button type="button" class="carousel-arrow carousel-prev absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 backdrop-blur-sm border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-white hover:scale-105 transition-all kbd-focus" aria-label="上一张">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            </button>
+                            <button type="button" class="carousel-arrow carousel-next absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 backdrop-blur-sm border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-white hover:scale-105 transition-all kbd-focus" aria-label="下一张">
+                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                            </button>
                         </div>
                         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-                            <button class="carousel-dot active" data-index="0" aria-label="第一张"></button>
-                            <button class="carousel-dot" data-index="1" aria-label="第二张"></button>
+                            <button class="carousel-dot active p-2 -m-1" data-index="0" aria-label="第一张"></button>
+                            <button class="carousel-dot p-2 -m-1" data-index="1" aria-label="第二张"></button>
                         </div>
                     </div>
                     <p class="promo-caption text-center mt-3">以上截图基于量盾安全中心</p>
@@ -278,7 +494,7 @@
                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                             </button>
                         </div>
-                        <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-50">
+                        <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-[var(--z-overlay)]">
                             <a href="https://pub-6061660c3e5d4769a9f88dc079c12ed8.r2.dev/ld6.2.exe" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="cloud-download" class="w-4 h-4 text-neutral-500"></i>
                                 <span>主链接下载</span>
@@ -293,7 +509,7 @@
                             </a>
                             <a href="https://links.8uid.com/d/01b79766b1c301b6b6bfb880dd8b828e" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="history" class="w-4 h-4 text-neutral-500"></i>
-                                <span>6.1pro(old)</span>
+                                <span class="tabular-nums">6.1pro(old)</span>
                             </a>
                         </div>
                     </div>
@@ -603,7 +819,7 @@
                     <div class="card rounded-xl p-6 sm:p-10">
                         <div class="flex items-center gap-2 mb-5">
                             <span class="update-tag">PRO</span>
-                            <span class="text-sm text-neutral-500">版本 6.1</span>
+                            <span class="text-sm text-neutral-500 tabular-nums">版本 6.1</span>
                         </div>
                         <div class="space-y-5 text-sm text-neutral-600 leading-relaxed">
                             <p>
@@ -615,7 +831,7 @@
                                         <i data-lucide="cpu" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">更新内核驱动</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">更新内核驱动</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">底层驱动全面重构，提升系统兼容性与防护响应速度，减少与其他安全软件的冲突概率。</p>
                                     </div>
                                 </div>
@@ -624,7 +840,7 @@
                                         <i data-lucide="layout" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">优化 UI 界面</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">优化 UI 界面</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">重新设计交互细节，界面更简洁直观，关键信息一目了然，操作路径更短。</p>
                                     </div>
                                 </div>
@@ -633,7 +849,7 @@
                                         <i data-lucide="hard-drive" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">降低磁盘占用</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">降低磁盘占用</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">优化缓存与日志机制，显著减少运行时的磁盘读写量，延长硬盘寿命。</p>
                                     </div>
                                 </div>
@@ -642,7 +858,7 @@
                                         <i data-lucide="zap" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">增加多线程扫描</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">增加多线程扫描</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">扫描引擎支持多线程并行处理，大幅提升大文件与全盘扫描的速度。</p>
                                     </div>
                                 </div>
@@ -672,7 +888,7 @@
                     <div class="card rounded-xl p-6 sm:p-10">
                         <div class="flex items-center gap-2 mb-5">
                             <span class="update-tag">6.2</span>
-                            <span class="text-sm text-neutral-500">正式版本</span>
+                            <span class="text-sm text-neutral-500 tabular-nums">正式版本</span>
                         </div>
                         <div class="space-y-5 text-sm text-neutral-600 leading-relaxed">
                             <p>
@@ -684,7 +900,7 @@
                                         <i data-lucide="shield-plus" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">HIPS 增强内核驱动</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">HIPS 增强内核驱动</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">全新内核级 HIPS 驱动，深入系统底层监控系统调用与关键行为，拦截能力更强、响应更快。</p>
                                     </div>
                                 </div>
@@ -693,7 +909,7 @@
                                         <i data-lucide="activity" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">行为监控升级</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">行为监控升级</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">增强对进程注入、注册表篡改、驱动加载等高危行为的实时监控与拦截精度。</p>
                                     </div>
                                 </div>
@@ -702,7 +918,7 @@
                                         <i data-lucide="gauge" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">性能优化</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">性能优化</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">内核驱动采用更高效的事件处理机制，降低 CPU 占用，减少系统性能损耗。</p>
                                     </div>
                                 </div>
@@ -711,7 +927,7 @@
                                         <i data-lucide="bug" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-semibold text-neutral-900 mb-0.5">兼容性改进</h4>
+                                        <h3 class="text-sm font-semibold text-neutral-900 mb-0.5">兼容性改进</h3>
                                         <p class="text-xs text-neutral-500 leading-relaxed">优化驱动签名与系统兼容性，支持更多 Windows 版本，减少与其他安全软件的冲突。</p>
                                     </div>
                                 </div>
@@ -830,7 +1046,7 @@
                                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-50">
+                            <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-[var(--z-overlay)]">
                                 <a href="https://pf1.cn-nb1.rains3.com/ld6.2.exe" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="cloud-download" class="w-4 h-4 text-neutral-500"></i>
                                     <span>主链接下载</span>
@@ -888,7 +1104,9 @@
                         <i data-lucide="mail" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">联系支持</span>
                     </a>
-                    <a href="#support" class="hover:text-neutral-900 transition-colors" target="_self">支持</a>
+                    <a href="/download.html" class="hover:text-neutral-900 transition-colors" target="_self">下载</a>
+                    <a href="/changelog.html" class="hover:text-neutral-900 transition-colors" target="_self">更新日志</a>
+                    <a href="/about.html" class="hover:text-neutral-900 transition-colors" target="_self">关于</a>
                     <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
                         <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
                         <span>工具站</span>
@@ -902,8 +1120,46 @@
         </div>
     </footer>
 
+    <!-- 返回顶部 -->
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+    </button>
+
     <script>
         lucide.createIcons();
+
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isHidden);
+                this.setAttribute('aria-expanded', String(isHidden));
+                const icon = this.querySelector('i[data-lucide]');
+                icon.setAttribute('data-lucide', isHidden ? 'x' : 'menu');
+                lucide.createIcons();
+            });
+            // 点击菜单项后关闭
+            mobileMenu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    const icon = mobileMenuToggle.querySelector('i[data-lucide]');
+                    icon.setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
+
+        // 为网格/列表容器内的 scroll-reveal 子元素设置错峰延迟
+        document.querySelectorAll('.grid, .space-y-5, .space-y-3').forEach(container => {
+            const reveals = container.querySelectorAll(':scope > .scroll-reveal');
+            reveals.forEach((el, idx) => {
+                const delay = Math.min(idx * 40, 240);
+                el.style.transitionDelay = `${delay}ms`;
+            });
+        });
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -920,6 +1176,41 @@
             observer.observe(el);
         });
 
+        // Scrollspy 导航活跃态
+        const navLinks = document.querySelectorAll('nav a[data-section]');
+        const sections = document.querySelectorAll('section[id]');
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.toggle('nav-active', link.dataset.section === id);
+                    });
+                }
+            });
+        }, { rootMargin: '-40% 0px -55% 0px' });
+        sections.forEach(s => navObserver.observe(s));
+
+        // 滚动进度条 & 返回顶部按钮
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+        function handleScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+            scrollProgress.style.width = progress + '%';
+            if (scrollTop > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
         document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
             toggle.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -930,7 +1221,7 @@
                 document.querySelectorAll('.dropdown-menu').forEach(m => {
                     if (m !== menu) m.classList.add('hidden');
                 });
-                
+
                 this.setAttribute('aria-expanded', !isHidden);
                 menu.classList.toggle('hidden', !isHidden);
             });
@@ -947,7 +1238,9 @@
 
         const carouselImages = document.querySelectorAll('.carousel-img');
         const carouselDots = document.querySelectorAll('.carousel-dot');
+        const carouselContainer = document.getElementById('promo-carousel');
         let currentIndex = 0;
+        let carouselTimer = null;
 
         function showCarouselImage(index) {
             carouselImages.forEach((img, i) => {
@@ -965,16 +1258,51 @@
             currentIndex = index;
         }
 
+        function startCarousel() {
+            stopCarousel();
+            carouselTimer = setInterval(() => {
+                const nextIndex = (currentIndex + 1) % carouselImages.length;
+                showCarouselImage(nextIndex);
+            }, 5000);
+        }
+        function stopCarousel() {
+            if (carouselTimer) {
+                clearInterval(carouselTimer);
+                carouselTimer = null;
+            }
+        }
+
         carouselDots.forEach(dot => {
             dot.addEventListener('click', () => {
                 showCarouselImage(parseInt(dot.dataset.index));
+                startCarousel();
             });
         });
 
-        setInterval(() => {
-            const nextIndex = (currentIndex + 1) % carouselImages.length;
-            showCarouselImage(nextIndex);
-        }, 5000);
+        document.querySelector('.carousel-prev')?.addEventListener('click', () => {
+            showCarouselImage((currentIndex - 1 + carouselImages.length) % carouselImages.length);
+            startCarousel();
+        });
+        document.querySelector('.carousel-next')?.addEventListener('click', () => {
+            showCarouselImage((currentIndex + 1) % carouselImages.length);
+            startCarousel();
+        });
+
+        // 鼠标悬停时暂停轮播
+        if (carouselContainer) {
+            carouselContainer.addEventListener('mouseenter', stopCarousel);
+            carouselContainer.addEventListener('mouseleave', startCarousel);
+        }
+
+        startCarousel();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopCarousel();
+            } else {
+                startCarousel();
+            }
+        });
     </script>
 </body>
 </html>

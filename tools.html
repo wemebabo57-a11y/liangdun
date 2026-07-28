@@ -38,13 +38,32 @@
         html {
             scroll-behavior: smooth;
         }
+        :root {
+            --z-base: 0;
+            --z-header: 50;
+            --z-overlay: 60;
+            --z-toast: 70;
+        }
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
         }
         ::selection {
             background: #3b82f6;
             color: #fff;
+        }
+
+        /* 滚动进度条 */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+            z-index: var(--z-overlay);
+            transition: width 0.1s ease-out;
         }
 
         /* Hero 背景动画 */
@@ -197,14 +216,33 @@
         /* 卡片样式 */
         .feature-card {
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .feature-card:hover {
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
             transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
         .icon-box {
             position: relative;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .icon-box::after {
             content: '';
@@ -217,6 +255,9 @@
         }
         .feature-card:hover .icon-box::after {
             opacity: 1;
+        }
+        .feature-card:hover .icon-box {
+            transform: scale(1.05) rotate(-2deg);
         }
 
         .scroll-reveal {
@@ -249,22 +290,122 @@
             letter-spacing: 0.05em;
             background: #eef2ff;
             color: #2563eb;
+            transition: all 0.3s ease;
+        }
+        .tool-badge:hover {
+            background: #2563eb;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* 导航链接下划线动画 */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 1px;
+            background: #2563eb;
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* 滚动到顶按钮 */
+        .back-to-top {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+            z-index: var(--z-toast);
+            cursor: pointer;
+            border: none;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(59, 130, 246, 0.45);
+        }
+
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+
+        /* Toast 通知 */
+        .toast-item {
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(15,23,42,0.25);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 320px;
+            pointer-events: auto;
+            animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1);
+        }
+        .toast-item.toast-out {
+            animation: toastOut 0.25s ease-in forwards;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(20px); }
+        }
+
+        /* 减少动效偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body class="bg-white font-sans text-slate-800">
 
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
     <!-- 顶部导航 -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-100/80">
+    <header class="fixed top-0 left-0 right-0 z-[var(--z-header)] bg-white/85 backdrop-blur-xl border-b border-slate-100/80">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="#" class="flex items-center gap-2 sm:gap-3 group">
-                <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" class="w-8 h-8 rounded-lg flex-shrink-0 object-contain">
+                <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾安全软件" width="32" height="32" class="w-8 h-8 rounded-lg flex-shrink-0 object-contain">
                 <span class="text-base font-semibold text-slate-900 tracking-tight">量盾工具站</span>
             </a>
             <nav class="hidden md:flex items-center gap-6 lg:gap-8">
-                <a href="#tools" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">工具集</a>
-                <a href="#about" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">关于</a>
-                <a href="#support" class="text-sm text-slate-500 hover:text-brand-600 transition-colors">支持</a>
+                <a href="#tools" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors">工具集</a>
+                <a href="/index.html" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors" target="_self">首页</a>
+                <a href="/download.html" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors" target="_self">下载</a>
+                <a href="/changelog.html" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors" target="_self">更新日志</a>
+                <a href="/about.html" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors" target="_self">关于</a>
+                <a href="#support" class="nav-link text-sm text-slate-500 hover:text-brand-600 transition-colors">支持</a>
             </nav>
             <div class="md:hidden">
                 <span class="text-xs text-slate-400">工具站</span>
@@ -279,7 +420,7 @@
                 <div class="text-center fade-in">
                     <div class="flex items-center justify-center gap-3 mb-6">
                         <div class="logo-glow inline-block">
-                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg shadow-brand-500/20 object-contain relative z-10">
+                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" width="64" height="64" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-lg shadow-brand-500/20 object-contain relative z-10">
                         </div>
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-4">
@@ -319,7 +460,7 @@
                             <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center">
                                 <i data-lucide="cpu" class="w-6 h-6 text-brand-500"></i>
                             </div>
-                            <span class="text-[10px] font-mono text-slate-300">v0.1</span>
+                            <span class="text-[10px] font-mono text-slate-300 tabular-nums">v0.1</span>
                         </div>
                         <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·系统工具箱</h3>
                         <p class="text-sm text-slate-400 leading-relaxed mb-5">
@@ -327,10 +468,10 @@
                             能力预热中，敬请期待深度功能。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('✨ 工具详细介绍即将开放，请保持关注量盾工具站。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('工具详细介绍即将开放，请保持关注量盾工具站。', 'info')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
-                            <button onclick="alert('📦 下载模块尚未开放，敬请关注后续版本。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('下载模块尚未开放，敬请关注后续版本。', 'package')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
                             </button>
                         </div>
@@ -350,10 +491,10 @@
                             即将注入完整防护逻辑，敬请期待。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('🔍 详情页正在构建，敬请期待完整工具信息。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('详情页正在构建，敬请期待完整工具信息。', 'search')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
-                            <button onclick="alert('📥 下载通道暂未开启，请关注后续正式版。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('下载通道暂未开启，请关注后续正式版。', 'download')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
                             </button>
                         </div>
@@ -373,10 +514,10 @@
                             性能优化组件，即将上线。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('⚙️ 工具详情暂未上线，未来会提供完整介绍。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('工具详情暂未上线，未来会提供完整介绍。', 'settings')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
-                            <button onclick="alert('🚀 下载功能暂未开放，敬请期待。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('下载功能暂未开放，敬请期待。', 'rocket')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
                             </button>
                         </div>
@@ -386,9 +527,9 @@
                     <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 scroll-reveal">
                         <div class="flex items-center justify-between mb-4">
                             <div class="icon-box w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden">
-                                <img src="https://1850287558.v.123pan.cn/1850287558/53933225" alt="网络诊断仪" class="w-10 h-10 rounded-lg object-contain">
+                                <img src="https://1850287558.v.123pan.cn/1850287558/53933225" alt="网络诊断仪" width="40" height="40" loading="lazy" class="w-10 h-10 rounded-lg object-contain">
                             </div>
-                            <span class="text-[10px] font-mono text-slate-300">v1.0</span>
+                            <span class="text-[10px] font-mono text-slate-300 tabular-nums">v1.0</span>
                         </div>
                         <h3 class="text-lg font-semibold text-slate-800 mb-2">量盾·网络诊断仪</h3>
                         <p class="text-sm text-slate-400 leading-relaxed mb-5">
@@ -396,7 +537,7 @@
                             WiFi状态诊断与安全扫描，快速定位网络问题。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('🌐 网络诊断工具详情页即将开放，敬请关注。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('网络诊断工具详情页即将开放，敬请关注。', 'globe')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
                             <button onclick="window.location.href='https://pf1.cn-nb1.rains3.com/wifi2.exe'" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
@@ -419,10 +560,10 @@
                             元数据提取与安全分析工具。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('📄 文件分析工具详情页建设中，敬请关注后续更新。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('文件分析工具详情页建设中，敬请关注后续更新。', 'file-text')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
-                            <button onclick="alert('📎 当前版本下载入口未激活，敬请期待。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('当前版本下载入口未激活，敬请期待。', 'paperclip')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
                             </button>
                         </div>
@@ -442,10 +583,10 @@
                             大文件管理与存储优化工具。
                         </p>
                         <div class="flex gap-3 mt-2">
-                            <button onclick="alert('🧩 详情模块即将上线，架构已预留好扩展位。')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('详情模块即将上线，架构已预留好扩展位。', 'puzzle')" class="btn-secondary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="info" class="w-3.5 h-3.5"></i> 详情
                             </button>
-                            <button onclick="alert('💽 下载未开放，敬请关注后续版本。')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                            <button onclick="showToast('下载未开放，敬请关注后续版本。', 'hard-drive')" class="btn-primary flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> 下载
                             </button>
                         </div>
@@ -477,7 +618,7 @@
                 <div class="max-w-3xl mx-auto scroll-reveal">
                     <div class="feature-card bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-10 text-center">
                         <div class="flex justify-center mb-5">
-                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" class="w-16 h-16 rounded-xl shadow-md object-contain">
+                            <img src="https://1850287558.v.123pan.cn/1850287558/47986573" alt="量盾工具站" width="64" height="64" loading="lazy" class="w-16 h-16 rounded-xl shadow-md object-contain">
                         </div>
                         <div class="space-y-4 text-sm text-slate-500 leading-relaxed">
                             <p>
@@ -546,7 +687,7 @@
                         <button onclick="window.location.href='https://pf1.cn-nb1.rains3.com/wifi2.exe'" class="btn-primary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium">
                             <i data-lucide="sparkles" class="w-4 h-4"></i> 下载网络诊断仪
                         </button>
-                        <button onclick="alert('📍 更多工具正在开发中，敬请关注量盾工具站更新。')" class="btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium">
+                        <button onclick="showToast('更多工具正在开发中，敬请关注量盾工具站更新。', 'map-pin')" class="btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium">
                             <i data-lucide="notebook-text" class="w-4 h-4"></i> 了解更多
                         </button>
                     </div>
@@ -554,6 +695,9 @@
                 </div>
             </div>
         </section>
+
+        <!-- Toast 通知容器 -->
+        <div id="toastContainer" class="fixed bottom-6 right-6 flex flex-col gap-2 z-[var(--z-toast)] pointer-events-none" aria-live="polite"></div>
     </main>
 
     <!-- 底部版权 -->
@@ -566,6 +710,9 @@
                         <i data-lucide="mail" class="w-3.5 h-3.5"></i>
                         <span>反馈</span>
                     </a>
+                    <a href="/index.html" class="hover:text-brand-600 transition-colors" target="_self">首页</a>
+                    <a href="/download.html" class="hover:text-brand-600 transition-colors" target="_self">下载</a>
+                    <a href="/changelog.html" class="hover:text-brand-600 transition-colors" target="_self">更新日志</a>
                     <a href="#tools" class="hover:text-brand-600 transition-colors">工具集</a>
                     <span class="text-xs text-slate-300">| 持续迭代</span>
                 </div>
@@ -573,7 +720,34 @@
         </div>
     </footer>
 
+    <!-- 返回顶部 -->
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+    </button>
+
     <script>
+        // Toast 通知系统
+        function showToast(message, iconName) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast-item';
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'flex-shrink-0 text-brand-300';
+            iconSpan.innerHTML = `<i data-lucide="${iconName || 'info'}" class="w-4 h-4"></i>`;
+            const msgSpan = document.createElement('span');
+            msgSpan.textContent = message;
+            toast.appendChild(iconSpan);
+            toast.appendChild(msgSpan);
+            container.appendChild(toast);
+            // 渲染图标
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.classList.add('toast-out');
+                setTimeout(() => toast.remove(), 250);
+            }, 3500);
+        }
+
         // 初始化所有lucide图标
         lucide.createIcons();
 
@@ -591,6 +765,26 @@
 
         document.querySelectorAll('.scroll-reveal').forEach(el => {
             observer.observe(el);
+        });
+
+        // 滚动进度条 & 返回顶部按钮
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+        function handleScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+            scrollProgress.style.width = progress + '%';
+            if (scrollTop > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 </body>

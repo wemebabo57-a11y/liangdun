@@ -51,7 +51,7 @@
         .btn-primary:hover { background: #404040; }
         .btn-primary:active { transform: translateY(1px); }
 
-        .btn-secondary {
+        .btn-secondary, .btn-browser {
             background: #fff;
             color: #171717;
             border: 1px solid #e5e5e5;
@@ -61,31 +61,12 @@
             border-color: #a3a3a3;
             background: #fafafa;
         }
-        .btn-secondary:active { transform: translateY(1px); }
-
-        .btn-browser {
-            background: #fff;
-            color: #171717;
-            border: 1px solid #e5e5e5;
-            transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
-        }
+        .btn-secondary:active, .btn-browser:active { transform: translateY(1px); }
+        
         .btn-browser:hover {
             border-color: #171717;
             background: #fafafa;
         }
-        .btn-browser:active { transform: translateY(1px); }
-
-        .btn-netdisk {
-            background: #fff;
-            color: #171717;
-            border: 1px solid #e5e5e5;
-            transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
-        }
-        .btn-netdisk:hover {
-            border-color: #171717;
-            background: #fafafa;
-        }
-        .btn-netdisk:active { transform: translateY(1px); }
 
         .link {
             color: #525252;
@@ -236,20 +217,12 @@
                 <a href="#support" class="link text-sm" target="_self">支持</a>
                 <a href="#download" class="link text-sm" target="_self">下载</a>
                 <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="link text-sm">工具站</a>
-                <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="link text-sm flex items-center gap-1">
-                    <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                    样本网盘
-                </a>
                 <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="link text-sm">国际站</a>
             </nav>
             <div class="flex items-center gap-1.5 md:hidden">
                 <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap">
                     <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
                     工具站
-                </a>
-                <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap">
-                    <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                    网盘
                 </a>
                 <a href="https://liangdun.wemebabo57.workers.dev/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap">
                     <i data-lucide="globe" class="w-3.5 h-3.5"></i>
@@ -277,7 +250,7 @@
                 <div class="mt-10 sm:mt-12 scroll-reveal">
                     <div class="promo-frame rounded-xl overflow-hidden shadow-sm">
                         <div id="promo-carousel" class="relative">
-                            <img src="https://pan.kslinmeng.cn/down.php/ef4d1e456a781bacc84d641770480716.png" alt="量盾安全中心界面截图 1" class="promo-img carousel-img active" data-index="0">
+                            <img src="https://pan.kslinmeng.cn/down.php/ef4d1e456a781bacc84d641770480716.png" alt="量盾安全中心界面截图 1" class="promo-img carousel-img active" data-index="0" style="position: relative;">
                             <img src="https://pan.kslinmeng.cn/view.php/b6d9786097e7aa24189c58f97794a7c1.png" alt="量盾安全中心界面截图 2" class="promo-img carousel-img" data-index="1" style="opacity: 0; position: absolute; top: 0; left: 0;">
                         </div>
                         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
@@ -301,7 +274,7 @@
                                 <span>下载量盾安全中心</span>
                             </a>
                             <div class="w-px h-4 bg-white/20 relative z-10 flex-shrink-0"></div>
-                            <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3 relative z-10 flex-shrink-0 kbd-focus" aria-label="展开下载选项">
+                            <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3 relative z-10 flex-shrink-0 kbd-focus" aria-expanded="false" aria-label="展开下载选项">
                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -334,14 +307,6 @@
                     <a href="https://github.com/wemebabo57-a11y/LDEFENDER.git" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium">
                         <i data-lucide="code-2" class="w-4 h-4"></i>
                         <span>前往项目仓库</span>
-                    </a>
-                </div>
-
-                <div class="mt-5 text-center scroll-reveal">
-                    <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
-                        <i data-lucide="folder-open" class="w-4 h-4"></i>
-                        <span>前往样本分享网盘</span>
-                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
             </div>
@@ -827,13 +792,13 @@
                             <div class="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
                                 <i data-lucide="at-sign" class="w-4 h-4 text-neutral-400 flex-shrink-0"></i>
                                 <span class="text-sm text-neutral-600 hidden sm:inline">主邮箱：</span>
-                                <a href="mailto:LDefender@kslinmeng.cn" class="text-sm text-neutral-900 font-medium hover:underline break-all">LDefender@kslinmeng.cn</a>
+                                <a href="mailto:me@kslinmeng.cn" class="text-sm text-neutral-900 font-medium hover:underline break-all">LDefender@kslinmeng.cn</a>
                                 <span class="text-xs text-neutral-400 ml-auto hidden sm:block">(推荐)</span>
                             </div>
                             <div class="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
                                 <i data-lucide="mail-plus" class="w-4 h-4 text-neutral-400 flex-shrink-0"></i>
                                 <span class="text-sm text-neutral-600 hidden sm:inline">备用邮箱：</span>
-                                <a href="lcloudcode@hotmail.com" class="text-sm text-neutral-900 font-medium hover:underline break-all">lcloudcode@hotmail.com</a>
+                                <a href="mailto:wemebabo57@gmail.com" class="text-sm text-neutral-900 font-medium hover:underline break-all">lcloudcode@hotmail.com</a>
                             </div>
                         </div>
                         <p class="text-xs text-neutral-500 mt-4 flex items-center gap-1.5">
@@ -859,7 +824,7 @@
                                     <span>下载量盾安全中心</span>
                                 </a>
                                 <div class="w-px h-4 bg-white/20 relative z-10 flex-shrink-0"></div>
-                                <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3 relative z-10 flex-shrink-0 kbd-focus" aria-label="展开下载选项">
+                                <button type="button" class="dropdown-toggle inline-flex items-center justify-center px-3 py-3 relative z-10 flex-shrink-0 kbd-focus" aria-expanded="false" aria-label="展开下载选项">
                                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -879,11 +844,7 @@
                             </div>
                         </div>
 
-                        <a href="https://pf1.cn-nb1.rains3.com/HIPS_Installer.zip" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium">
-                            <i data-lucide="shield-check" class="w-4 h-4"></i>
-                            <span>下载量盾HIPS</span>
-                        </a>
-                        <a href="https://pub-6061660c3e5d4769a9f88dc079c12ed8.r2.dev/setup.exe" class="btn-secondary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium">
+                        <a href="https://pub-6061660c3e5d4769a9f88dc079c12ed8.r2.dev/setup.exe" class="btn-browser w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium">
                             <i data-lucide="globe" class="w-4 h-4"></i>
                             <span>下载量盾安全浏览器</span>
                             <span class="badge-new">NEW</span>
@@ -900,18 +861,13 @@
                                 前往工具站
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                             </a>
-                            <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium">
-                                <i data-lucide="folder-open" class="w-4 h-4"></i>
-                                前往样本分享网盘
-                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                            </a>
                             <a href="https://app.liangdun.top" target="_blank" rel="noopener" class="btn-secondary inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium">
                                 <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                                 前往软件商店
                                 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                             </a>
                         </div>
-                        <p class="text-xs text-neutral-500 mt-3">查阅安全资讯 · 获取安全工具 · 样本共享研究 · 访问国际站点</p>
+                        <p class="text-xs text-neutral-500 mt-3">查阅安全资讯 · 获取安全工具 · 访问国际站点</p>
                     </div>
                 </div>
             </div>
@@ -925,7 +881,7 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p class="text-center text-sm text-neutral-500">量盾安全软件 © 2026 版权所有</p>
                 <div class="flex items-center gap-4 text-sm text-neutral-500 flex-wrap justify-center">
-                    <a href="mailto:LDefender@kslinmeng.cn" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
+                    <a href="mailto:QQ201324qq0596@outlook.com" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
                         <i data-lucide="mail" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">联系支持</span>
                     </a>
@@ -933,10 +889,6 @@
                     <a href="https://liangdun.top/tools.html" target="_blank" rel="noopener" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
                         <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
                         <span>工具站</span>
-                    </a>
-                    <a href="https://pan.liangdun.top/" target="_blank" rel="noopener" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
-                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                        <span>样本网盘</span>
                     </a>
                     <a href="https://app.liangdun.top" target="_blank" rel="noopener" class="hover:text-neutral-900 transition-colors flex items-center gap-1">
                         <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
@@ -975,7 +927,9 @@
                 document.querySelectorAll('.dropdown-menu').forEach(m => {
                     if (m !== menu) m.classList.add('hidden');
                 });
-
+                
+                // Fix accessibility bug by tracking aria-expanded
+                this.setAttribute('aria-expanded', !isHidden);
                 menu.classList.toggle('hidden', !isHidden);
             });
         });
@@ -983,6 +937,9 @@
         document.addEventListener('click', function() {
             document.querySelectorAll('.dropdown-menu').forEach(m => {
                 m.classList.add('hidden');
+            });
+            document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+                toggle.setAttribute('aria-expanded', 'false');
             });
         });
 

@@ -309,13 +309,29 @@
             50% { box-shadow: 0 0 0 4px rgba(23,23,23,0); }
         }
 
+        /* 下载区下拉：必须压住下一节（产品介绍），否则会被盖住导致点不到 */
+        #download { position: relative; z-index: 40; }
+        #features { position: relative; z-index: 0; }
+        .download-dropdown { position: relative; z-index: 50; }
+        .download-dropdown .dropdown-menu {
+            z-index: 80;
+        }
         .dropdown-menu {
-            background: #fff;
+            background: #fff !important;
+            background-color: #fff !important;
             border: 1px solid #e5e5e5;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
             animation: dropdownIn 0.2s cubic-bezier(0.16,1,0.3,1);
             transform-origin: top center;
         }
+        /* 整行可点：图标不抢点击，链接铺满整行 */
+        .dropdown-menu a {
+            display: flex;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        .dropdown-menu svg, .dropdown-menu i[data-lucide] { pointer-events: none; }
         @keyframes dropdownIn {
             from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
@@ -484,7 +500,7 @@
         <!-- 下载 -->
         <section id="download" class="py-10 sm:py-14">
             <div class="max-w-5xl mx-auto px-4 sm:px-6">
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 scroll-reveal">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                     <div class="download-dropdown relative w-full sm:w-auto">
                         <div class="btn-primary inline-flex items-center w-full rounded-lg text-sm font-medium overflow-hidden">
                             <a href="https://243.cn-nb2.rains3.com/liangdun6.4setup.exe" class="inline-flex items-center justify-center gap-2 px-6 py-3 relative z-10 flex-1 kbd-focus">
@@ -524,7 +540,7 @@
 
                     <div class="download-dropdown relative w-full sm:w-auto" title="基于游龙安全二次开发 · 内置 20000 条 MD5 + 10 条 YARA">
                         <div class="btn-secondary inline-flex items-center w-full rounded-lg text-sm font-medium overflow-hidden">
-                            <a href="https://links.8uid.com/d/wqcfeev6ywis" class="inline-flex items-center justify-center gap-2 px-6 py-3 relative z-10 flex-1 kbd-focus">
+                            <a href="https://links.8uid.com/d/wqcfeev6ywis" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 px-6 py-3 relative z-10 flex-1 kbd-focus">
                                 <i data-lucide="smartphone" class="w-4 h-4"></i>
                                 <span>下载量盾手机版</span>
                                 <span class="badge-new">NEW</span>
@@ -535,24 +551,24 @@
                             </button>
                         </div>
                         <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-[var(--z-overlay)]">
-                            <a href="https://links.8uid.com/d/wqcfeev6ywis" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                            <a href="https://links.8uid.com/d/wqcfeev6ywis" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="zap" class="w-4 h-4 text-neutral-500"></i>
                                 <span>直链下载</span>
                             </a>
-                            <a href="https://wwavs.lanzouv.com/iuPZB4b5169c" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                            <a href="https://wwavs.lanzouv.com/iuPZB4b5169c" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="cloud" class="w-4 h-4 text-neutral-500"></i>
                                 <span>网盘下载（密码 580e）</span>
                             </a>
-                            <a href="https://pan.moe/s/7G4kU5" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                            <a href="https://pan.moe/s/7G4kU5" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="hard-drive-download" class="w-4 h-4 text-neutral-500"></i>
                                 <span>网盘2下载</span>
                             </a>
                             <div class="my-1.5 border-t border-neutral-100"></div>
-                            <a href="https://github.com/wemebabo57-a11y/liangdun-phone" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                            <a href="https://github.com/wemebabo57-a11y/liangdun-phone" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="github" class="w-4 h-4 text-neutral-500"></i>
                                 <span>量盾手机版 GitHub</span>
                             </a>
-                            <a href="https://github.com/iill392/youlong-security" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                            <a href="https://github.com/iill392/youlong-security" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                 <i data-lucide="github" class="w-4 h-4 text-neutral-500"></i>
                                 <span>游龙官方 GitHub</span>
                             </a>
@@ -1170,7 +1186,7 @@
                         </a>
                         <div class="download-dropdown relative w-full sm:w-auto" title="基于游龙安全二次开发 · 内置 20000 条 MD5 + 10 条 YARA">
                             <div class="btn-secondary inline-flex items-center w-full rounded-lg text-sm font-medium overflow-hidden">
-                                <a href="https://links.8uid.com/d/wqcfeev6ywis" class="inline-flex items-center justify-center gap-2 px-6 py-3 relative z-10 flex-1 kbd-focus">
+                                <a href="https://links.8uid.com/d/wqcfeev6ywis" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 px-6 py-3 relative z-10 flex-1 kbd-focus">
                                     <i data-lucide="smartphone" class="w-4 h-4"></i>
                                     <span>下载量盾手机版</span>
                                     <span class="badge-new">NEW</span>
@@ -1181,24 +1197,24 @@
                                 </button>
                             </div>
                             <div class="dropdown-menu hidden absolute top-full left-0 right-0 mt-2 rounded-lg py-1.5 z-[var(--z-overlay)]">
-                                <a href="https://links.8uid.com/d/wqcfeev6ywis" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                                <a href="https://links.8uid.com/d/wqcfeev6ywis" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="zap" class="w-4 h-4 text-neutral-500"></i>
                                     <span>直链下载</span>
                                 </a>
-                                <a href="https://wwavs.lanzouv.com/iuPZB4b5169c" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                                <a href="https://wwavs.lanzouv.com/iuPZB4b5169c" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="cloud" class="w-4 h-4 text-neutral-500"></i>
                                     <span>网盘下载（密码 580e）</span>
                                 </a>
-                                <a href="https://pan.moe/s/7G4kU5" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                                <a href="https://pan.moe/s/7G4kU5" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="hard-drive-download" class="w-4 h-4 text-neutral-500"></i>
                                     <span>网盘2下载</span>
                                 </a>
                                 <div class="my-1.5 border-t border-neutral-100"></div>
-                                <a href="https://github.com/wemebabo57-a11y/liangdun-phone" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                                <a href="https://github.com/wemebabo57-a11y/liangdun-phone" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="github" class="w-4 h-4 text-neutral-500"></i>
                                     <span>量盾手机版 GitHub</span>
                                 </a>
-                                <a href="https://github.com/iill392/youlong-security" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                                <a href="https://github.com/iill392/youlong-security" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                                     <i data-lucide="github" class="w-4 h-4 text-neutral-500"></i>
                                     <span>游龙官方 GitHub</span>
                                 </a>
@@ -1362,6 +1378,12 @@
 
                 this.setAttribute('aria-expanded', !isHidden);
                 menu.classList.toggle('hidden', !isHidden);
+            });
+        });
+
+        document.querySelectorAll('.dropdown-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.stopPropagation();
             });
         });
 
